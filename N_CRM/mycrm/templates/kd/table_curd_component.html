@@ -1,0 +1,109 @@
+
+{% load kingadmin_tags %}
+
+    <form class="form-horizontal" method="post" onsubmit="VerificationBeforeFormSubmit()"><!--提交之前，将所有选中的input[check]设置为选中状态-->
+    {% csrf_token %}
+        {% for field in form_obj %}<!--动态modelform实例化生成的根据字段 的 html标签-->
+      <div class="form-group">
+        <label for="inputEmail3" class="col-sm-2 control-label">{{ field.label }}</label><!--字段的名称显示中文-->
+        <div class="col-sm-10">
+
+
+            {% if field.name in admin_class.filter_horizontal %}<!--field.name = field.lable 但显示英文-->
+
+
+                <div class="col-lg-5">
+                <input type="search" class="form-control" placeholder="搜索" onclick="function FuzzSearch(this)"><!--horizontal框内的搜索框-->
+                    <select id="id_{{ field.name }}_from" class="form-control" multiple>
+                        {% get_available_m2m_data field.name form_obj admin_class as available_data %}
+                        {% for obj in available_data %}
+
+                            <option ondblclick="MoveSelectedOption(this,'id_{{ field.name }}_to')" value="{{ obj.id }}">{{ obj }}</option>
+
+                        {% endfor %}
+                    </select>
+                <p><a onclick="MoveAllElement('id_{{ field.name }}_from','id_{{ field.name }}_to')">Choice ALL</a></p>
+                </div><!--左右移动的horizontal框子     左框-->
+
+
+
+                <div class="col-lg-4">
+                    <select tag="selected_m2m" id="id_{{ field.name }}_to" class="form-control" multiple name="{{ field.name }}">
+                        {% get_selected_m2m_data field.name form_obj admin_class as get_selected_m2m_data %}
+                        {% for obj in get_selected_m2m_data %}
+
+                            <option ondblclick="MoveSelectedOption(this,'id_{{ field.name }}_from')" value="{{ obj.id }}">{{ obj }}</option>
+
+                        {% endfor %}
+                    </select>
+                <p><a onclick="MoveAllElement('id_{{ field.name }}_to','id_{{ field.name }}_from')">Remove ALL</a></p>
+
+                </div><!--左右移动的horizontal框子     右框-->
+
+
+
+
+                <p style="color: red">{{ field.errors.0 }}</p>
+            {% else %}
+
+            {{ field }}
+          <p style="color: red">{{ field.errors.0 }}</p>
+            {% endif %}
+        </div>
+      </div>
+        {% endfor %}
+
+
+    {% if not admin_class.form_add %}
+        {% for field in admin_class.readonly_fields %}
+          <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">{{ field }}</label>
+            <div class="col-sm-10">
+              <p>{% get_field_value form_obj field %}</p>
+              <p style="color: red">{{ field.errors.0 }}</p>
+            </div>
+          </div>
+
+        {% endfor %}
+    {% endif %}
+
+        <p>
+          <input type="submit" class="btn btn-primary btn-lg col-sm-offset-10 col-sm-2" value="Save">
+        </p>   <!--保存按钮-->
+
+    <script>
+        function MoveSelectedOption(ele,target_id) {
+            var new_target_id = $(ele).parent().attr('id');
+            var option = "<option value ='" + $(ele).val() + "'ondblclick=MoveSelectedOption(this,'"+ new_target_id +"')>" + $(ele).text() + "</option>";
+            $("#"+target_id).append(option);
+            $(ele).remove();
+
+        }
+
+        function VerificationBeforeFormSubmit() {
+            $('select[tag] option').prop('selected',true);
+
+        }
+
+        function MoveAllElement(from_id,to_id) {
+            $('#'+from_id).children().each(function () {
+                MoveSelectedOption(this,to_id);
+            });
+<!--  FuzzSearch函数解析不了，不知道什么问题，始终为灰色（名字正确，相应函数正确oninput）-->
+        function FuzzSearch(ele){
+            console.log($(ele).val());
+            var search_text = $(ele).val();
+            $(ele).next().children().each(function () {
+                if ($(this).text().search(search_text) != -1) {
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            })
+        }
+
+        }
+    </script>
+
+
+    </form>

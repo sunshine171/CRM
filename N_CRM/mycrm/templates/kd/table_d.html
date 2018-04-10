@@ -1,0 +1,19 @@
+{% extends 'kd/base.html' %}
+
+
+{% load kingadmin_tags %}
+
+
+    {% block model %}<!--显示删除相关联的表（进入删除的delete按键在修改界面）-->
+        {% display_all_related_objs obj as all_related_eles %}
+        {{ all_related_eles|safe }}
+
+<div class="col-lg-offset-2">
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">确认删除</button>
+        <a type="button" class="btn btn-default" href="/kingadmin/{{ app_name }}/{{ model_name }}/">back</a>
+    </form>
+</div>
+    {% endblock %}
+
