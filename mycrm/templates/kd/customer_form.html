@@ -1,0 +1,127 @@
+{% extends 'kd/base.html' %}
+
+{% block customer_form %}
+
+<link href = "/static/plugins/dropzone.css" rel="stylesheet">
+
+
+<div class="container"><!--保证panel在页面的中间-->
+<h1>xxx欢迎您|上善若水</h1>
+
+    <form action="" method="post" onsubmit="Be(this)">
+    {% csrf_token %}
+        <div class="panel panel-success"><!--整个panel-->
+        <div class="panel-heading"><!--panel上面的一个颜色样式，我选的是骚绿-->
+
+        </div>
+          <div class="panel-body"><!--panel的主体-->
+              {% for customer_form_list in customer_form %}<!--在这边按出了一个可以快捷书写模板语言for的快捷键，然尝试未果-->
+                <div class="form-group col-lg-6">
+                    <label class="col-sm-2 control-label">{{ customer_form_list.label }}</label>
+                    <div class="col-sm-10">{{ customer_form_list }}</div>
+                    <span style="color: red">{{ customer_form_list.errors.0 }}</span>
+                </div>
+              {% endfor  %}
+
+
+               <div class="form-group col-lg-6">
+                    <label class="col-sm-2 control-label">报名课程</label>
+                    <div class="col-sm-10">{{ enrollment_obj.class_grade }}</div>
+                </div>
+               <div class="form-group col-lg-6">
+                    <label class="col-sm-2 control-label">所报课程费用</label>
+                    <div class="col-sm-10">{{ enrollment_obj.class_grade.course.price }}</div>
+               </div>
+
+               <hr>
+               <pre style="height: 300px;">
+                  <p>{{ enrollment_obj.class_grade.contract_template.content }}</p>
+               </pre>
+              <div>
+                  <input type="checkbox" name="contract-agreed">仔细阅读上述合同，并同意
+                  <button class="btn btn-warning"> 提交</button>
+              </div>
+          </div>
+          <div class="panel-footer">Panel footer</div>
+        </div>
+
+    </form>
+<ul id="uploaded_files">
+    {% for file in upload_files %}
+    <li>
+        {{ file }}
+    </li>
+    {% endfor %}
+</ul>
+
+
+      <!--dropzone实现-->
+<h1>拖拽上传文件</h1>
+    <form id='myAwesomeDropzone' action="{%  url 'enrollment_fileupload' enrollment_obj.id %}" class="dropzone">
+      <div class="fallback">
+        <input name="file" type="file"/>
+      </div>
+    </form>
+
+</div>
+<script>
+    function Be(ele) {
+        $(':disabled').removeAttr('disabled')
+        //return true;//跟上面的return首尾呼应，true代表提交，false代表不提交
+        //return false;
+    }
+
+
+</script>
+
+
+
+    <!--实现dropzone的基本功能，显示，限制数量、大小-->
+<script src="/static/plugins/dropzone.js"></script>
+<script>
+
+        // "myAwesomeDropzone" is the camelized version of the HTML element's ID
+        Dropzone.options.myAwesomeDropzone = {
+          paramName: "file", // The name that will be used to transfer the file
+          maxFilesize: 2, // MB
+          maxFiles:2,
+          parallelUploads:1,
+          accept: function(file, done) {
+            if (file.name == "justinbieber.jpg") {
+              done("Naha, you don't.");
+            }
+            else { done(); }
+          }
+        };
+
+          // Now that the DOM is fully loaded, create the dropzone, and setup the
+          // event listeners
+          // Prevent Dropzone from auto discovering this element:
+          Dropzone.options.myAwesomeDropzone = false;
+          var myDropzone = new Dropzone("#myAwesomeDropzone");
+          myDropzone.on("success", function(file,response) {
+            /* Maybe display some more file information on your page */
+             console.log("completet", file, response);
+             var response = JSON.parse(response);
+             if (!response.status){
+                 alert(response.err_msg);
+             }else {
+                 $("#uploaded_files").append("<li>"+ file.name +"</li>");
+
+             }
+
+          });
+
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+

@@ -1,0 +1,57 @@
+{% extends 'kd/base.html' %}
+
+
+{% block enrollment %}
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+
+    <div class="panel panel-default">
+        <div class="panel-body tabs">
+            <h3>欢迎进入报名流程</h3>
+            <ul class="nav nav-pills ">
+
+                <li class="active"><a href="#pilltab1" data-toggle="tab">生成链接</a></li>
+                <li class=""><a href="#pilltab2" data-toggle="tab">确认信息</a></li>
+                <li class=""><a href="#pilltab3" data-toggle="tab">确认缴费信息</a></li>
+            </ul>
+            <form method="post">
+                {% csrf_token %}
+                <div class="tab-content" style='width: 500px;display: inline-block'>
+                    <div class="tab-pane fade active in" id="pilltab1">
+                        <h4>Tab 1</h4>
+
+                        <div class="col-lg-4">
+                            <select name="customer_id" class="form-control">
+
+                            {% for customer in customers %}
+
+                                <option value="{{ customer.id }}">{{ customer.name }}</option>
+
+                            {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <select name="grade_id" class="form-control">
+                                {% for grade in grades %}
+
+                                    <option value="{{ grade.id }}">{{ grade.course }}</option>
+
+                                {% endfor %}
+                             </select>
+                        </div>
+                    <h3>{{ urls }}</h3>
+                    <br>
+                    <br>
+                    <input type="submit" class="btn btn-success" value="下一步">
+                    </div>
+                    <div class="tab-pane fade" id="pilltab2">
+                        <h4>Tab 2</h4>
+                        <p></p>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

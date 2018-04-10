@@ -1,0 +1,16 @@
+{% extends 'kd/base.html' %}
+
+
+{% load kingadmin_tags %}
+
+    {% block model %}
+<div class="col-lg-offset-2">
+    <div class="panel panel-default ">
+<!-- Default panel contents -->
+        <div class="panel-heading"><h2>{% build_model_name admin_class %}</h2></div>
+        <div class="panel-heading"><h4>添加</h4></div>
+        {% include 'kd/table_curd_component.html' %}
+    </div>
+</div>
+
+    {% endblock %}

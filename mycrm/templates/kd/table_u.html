@@ -1,0 +1,19 @@
+{% extends 'kd/base.html' %}
+
+
+{% load kingadmin_tags %}
+
+
+    {% block model %}
+<div class="col-lg-offset-2">
+    <div class="panel panel-default">
+  <!-- Default panel contents -->
+        <div class="panel-heading"><h2>{% build_model_name admin_class %}</h2></div>
+        <div class="panel-heading"><h4>修改{{ form_obj.instance }}</h4></div>
+
+        {% include 'kd/table_curd_component.html' %}
+    </div>
+
+        <a type="button" class="btn btn-danger" href="{% url 'table_obj_delete' app_name model_name obj_id %}">Delete</a>
+</div>
+    {% endblock %}
